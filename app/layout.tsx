@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "API Docs for phpMyFAQ",
   description: "phpMyFAQ API documentation",
+  applicationName: "phpMyFAQ API",
 };
 
 export default function RootLayout({

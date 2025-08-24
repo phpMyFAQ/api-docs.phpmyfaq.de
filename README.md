@@ -19,4 +19,4 @@ To deploy the project, just push the current branch to the `main` branch. Vercel
 
 ## Copyright
 
-Copyright © 2001–2024 Thorsten Rinne and the phpMyFAQ Team
+Copyright © 2001–2025 Thorsten Rinne and the phpMyFAQ Team

@@ -41,7 +41,8 @@ export default function Home(): React.ReactElement {
 
   const apiUrls: ApiUrls = {
     '4.0': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/4.0/docs/openapi.json',
-    '4.1': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/main/docs/openapi.json',
+    '4.1': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/4.1/docs/openapi.json',
+    '4.2': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/main/docs/openapi.json',
   };
 
   return (
@@ -56,7 +57,7 @@ export default function Home(): React.ReactElement {
           isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
         } rounded-lg border shadow-lg overflow-hidden wrapper`}>
 
-          {/* Controls Header inside Swagger container */}
+          {/* Controls Header inside the Swagger container */}
           <div className={`${
             isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
           } mx-4 mt-4 mb-2 px-6 py-4 border rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
@@ -81,6 +82,7 @@ export default function Home(): React.ReactElement {
               >
                 <option value="4.0">Version 4.0</option>
                 <option value="4.1">Version 4.1</option>
+                <option value="4.2">Version 4.2</option>
               </select>
             </div>
 

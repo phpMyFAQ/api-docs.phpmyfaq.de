@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useSyncExternalStore } from 'react';
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
 
@@ -8,36 +8,43 @@ interface ApiUrls {
   [key: string]: string;
 }
 
+const DARK_MEDIA_QUERY = '(prefers-color-scheme: dark)';
+
+function subscribePrefersDark(callback: () => void): () => void {
+  const mql = window.matchMedia(DARK_MEDIA_QUERY);
+  mql.addEventListener('change', callback);
+  return () => mql.removeEventListener('change', callback);
+}
+
+function getPrefersDarkSnapshot(): boolean {
+  return window.matchMedia(DARK_MEDIA_QUERY).matches;
+}
+
+function getPrefersDarkServerSnapshot(): boolean {
+  return false;
+}
+
 export default function Home(): React.ReactElement {
   const [version, setVersion] = useState<string>('4.0');
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [userOverride, setUserOverride] = useState<boolean | null>(null);
+  const systemPrefersDark = useSyncExternalStore(
+    subscribePrefersDark,
+    getPrefersDarkSnapshot,
+    getPrefersDarkServerSnapshot,
+  );
+  const isDarkMode = userOverride ?? systemPrefersDark;
 
-  // Initialize dark mode based on system preference
   useEffect(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setIsDarkMode(prefersDark);
-
-    // Apply dark mode to the document
-    if (prefersDark) {
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
+    document.documentElement.classList.toggle('dark', isDarkMode);
+  }, [isDarkMode]);
 
   const handleVersionChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     setVersion(event.target.value);
   }, []);
 
   const handleDarkModeToggle = useCallback(() => {
-    setIsDarkMode(prev => {
-      const newMode = !prev;
-      if (newMode) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-      return newMode;
-    });
-  }, []);
+    setUserOverride(!isDarkMode);
+  }, [isDarkMode]);
 
   const apiUrls: ApiUrls = {
     '4.0': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/4.0/docs/openapi.json',
@@ -51,7 +58,7 @@ export default function Home(): React.ReactElement {
         ? 'bg-gray-900' 
         : 'bg-gray-50'
     }`}>
-      <div className="swagger-ui mx-auto px-4 py-8">
+      <div className="mx-auto px-4 py-8">
         {/* Main Swagger UI Container with integrated controls */}
         <div className={`${
           isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
@@ -60,14 +67,14 @@ export default function Home(): React.ReactElement {
           {/* Controls Header inside the Swagger container */}
           <div className={`${
             isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
-          } mx-4 mt-4 mb-2 px-6 py-4 border rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
+          } px-6 py-4 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
 
             {/* Version Selector */}
             <div className="flex items-center space-x-3">
               <label htmlFor="api-version" className={`font-medium ${
                 isDarkMode ? 'text-gray-200' : 'text-gray-700'
               }`}>
-                API Version:
+                phpMyFAQ Version:
               </label>
               <select
                 id="api-version"
@@ -78,10 +85,10 @@ export default function Home(): React.ReactElement {
                     ? 'bg-gray-600 border-gray-500 text-white focus:border-blue-400' 
                     : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
                 } px-3 py-1.5 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors text-sm`}
-                aria-label="Select API version"
+                aria-label="Select phpMyFAQ version"
               >
                 <option value="4.0">Version 4.0</option>
-                <option value="4.1">Version 4.1</option>
+                <option value="4.1" selected>Version 4.1</option>
                 <option value="4.2">Version 4.2</option>
               </select>
             </div>

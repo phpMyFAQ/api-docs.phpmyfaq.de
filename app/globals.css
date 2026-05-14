@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -87,14 +87,6 @@ body {
 
 .swagger-container-dark .swagger-ui .info .description {
   color: #d1d5db !important;
-}
-
-.swagger-container-dark .swagger-ui .scheme-container {
-  background: #374151 !important;
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid #4b5563;
-  filter: invert(1) hue-rotate(180deg);
 }
 
 /* Fix for inverted elements in dark mode */

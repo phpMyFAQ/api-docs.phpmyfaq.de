@@ -1,6 +1,6 @@
 # api-docs.phpmyfaq.de
 
-The official phpMyFAQ API documentation is built with [Next.js](https://nextjs.org/) and 
+The official phpMyFAQ API documentation is built with [Next.js](https://nextjs.org/) and
 [Tailwind CSS](https://tailwindcss.com/), hosted on [Vercel](https://www.vercel.com/).
 
 ## Getting Started

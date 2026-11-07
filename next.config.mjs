@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  turbopack: {
-
-  },
+  turbopack: {},
   poweredByHeader: false,
   reactStrictMode: true,
   async headers() {
@@ -24,7 +22,7 @@ const nextConfig = {
           },
         ],
       },
-    ]
+    ];
   },
 };
 

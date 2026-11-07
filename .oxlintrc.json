@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "ignorePatterns": [".next/**", "out/**", "coverage/**", "node_modules/**", ".pnpm-store/**", "next-env.d.ts"],
+  "plugins": ["typescript", "react", "nextjs", "jsx-a11y", "vitest", "import"],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true
+  },
+  "rules": {
+    "no-useless-escape": "warn",
+    "react/set-state-in-effect": "warn",
+    "react/purity": "warn",
+    "nextjs/no-html-link-for-pages": "error",
+    "jsx-a11y/heading-has-content": "error",
+    "vitest/require-mock-type-parameters": "error",
+    "typescript/triple-slash-reference": "error",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true,
+        "caughtErrors": "none"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.{test,spec}.{js,jsx,ts,tsx}", "vitest.setup.ts"],
+      "env": {
+        "vitest": true
+      }
+    }
+  ]
+}

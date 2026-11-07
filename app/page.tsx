@@ -1,147 +1,68 @@
-"use client";
+'use client';
 
-import React, { useState, useCallback, useEffect, useSyncExternalStore } from 'react';
+import React, { useState, useCallback } from 'react';
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface ApiUrls {
   [key: string]: string;
 }
 
-const DARK_MEDIA_QUERY = '(prefers-color-scheme: dark)';
-
-function subscribePrefersDark(callback: () => void): () => void {
-  const mql = window.matchMedia(DARK_MEDIA_QUERY);
-  mql.addEventListener('change', callback);
-  return () => mql.removeEventListener('change', callback);
-}
-
-function getPrefersDarkSnapshot(): boolean {
-  return window.matchMedia(DARK_MEDIA_QUERY).matches;
-}
-
-function getPrefersDarkServerSnapshot(): boolean {
-  return false;
-}
+const apiUrls: ApiUrls = {
+  '4.0': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/4.0/docs/openapi.json',
+  '4.1': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/4.1/docs/openapi.json',
+  '4.2': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/main/docs/openapi.json',
+};
 
 export default function Home(): React.ReactElement {
   const [version, setVersion] = useState<string>('4.0');
-  const [userOverride, setUserOverride] = useState<boolean | null>(null);
-  const systemPrefersDark = useSyncExternalStore(
-    subscribePrefersDark,
-    getPrefersDarkSnapshot,
-    getPrefersDarkServerSnapshot,
-  );
-  const isDarkMode = userOverride ?? systemPrefersDark;
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDarkMode);
-  }, [isDarkMode]);
+  const { theme } = useTheme();
 
   const handleVersionChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     setVersion(event.target.value);
   }, []);
 
-  const handleDarkModeToggle = useCallback(() => {
-    setUserOverride(!isDarkMode);
-  }, [isDarkMode]);
-
-  const apiUrls: ApiUrls = {
-    '4.0': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/4.0/docs/openapi.json',
-    '4.1': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/4.1/docs/openapi.json',
-    '4.2': 'https://raw.githubusercontent.com/thorsten/phpMyFAQ/main/docs/openapi.json',
-  };
-
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
-        ? 'bg-gray-900' 
-        : 'bg-gray-50'
-    }`}>
-      <div className="mx-auto px-4 py-8">
-        {/* Main Swagger UI Container with integrated controls */}
-        <div className={`${
-          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-        } rounded-lg border shadow-lg overflow-hidden wrapper`}>
-
-          {/* Controls Header inside the Swagger container */}
-          <div className={`${
-            isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
-          } px-6 py-4 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
-
-            {/* Version Selector */}
-            <div className="flex items-center space-x-3">
-              <label htmlFor="api-version" className={`font-medium ${
-                isDarkMode ? 'text-gray-200' : 'text-gray-700'
-              }`}>
-                phpMyFAQ Version:
-              </label>
-              <select
-                id="api-version"
-                value={version}
-                onChange={handleVersionChange}
-                className={`${
-                  isDarkMode 
-                    ? 'bg-gray-600 border-gray-500 text-white focus:border-blue-400' 
-                    : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
-                } px-3 py-1.5 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors text-sm`}
-                aria-label="Select phpMyFAQ version"
-              >
-                <option value="4.0">Version 4.0</option>
-                <option value="4.1" selected>Version 4.1</option>
-                <option value="4.2">Version 4.2</option>
-              </select>
-            </div>
-
-            {/* Dark Mode Toggle */}
-            <div className="flex items-center space-x-3">
-              <span className={`font-medium text-sm ${
-                isDarkMode ? 'text-gray-200' : 'text-gray-700'
-              }`}>
-                Theme:
-              </span>
-              <button
-                onClick={handleDarkModeToggle}
-                className={`${
-                  isDarkMode
-                    ? 'bg-blue-600 hover:bg-blue-700'
-                    : 'bg-gray-600 hover:bg-gray-700'
-                } relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
-                aria-label="Toggle dark mode"
-              >
-                <span
-                  className={`${
-                    isDarkMode ? 'translate-x-5' : 'translate-x-1'
-                  } inline-block h-3 w-3 transform rounded-full bg-white transition-transform`}
-                />
-              </button>
-              <span className={`text-xs ${
-                isDarkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}>
-                {isDarkMode ? '🌙' : '☀️'}
-              </span>
-            </div>
+    <div className="page">
+      <div className="container">
+        <div className="page__header">
+          <div>
+            <h1>API Documentation</h1>
+            <p className="page__description">
+              The REST API of phpMyFAQ, rendered from the OpenAPI specification of the selected release.
+            </p>
           </div>
-
-          {/* Swagger UI Content */}
-          <div className={`${
-            isDarkMode ? 'swagger-container-dark' : 'swagger-container-light'
-          }`}>
-            <SwaggerUI
-              url={apiUrls[version]}
-              deepLinking={true}
-              displayOperationId={false}
-              defaultModelsExpandDepth={1}
-              defaultModelExpandDepth={1}
-              defaultModelRendering="example"
-              displayRequestDuration={true}
-              docExpansion="list"
-              filter={true}
-              showExtensions={true}
-              showCommonExtensions={true}
-              tryItOutEnabled={true}
-            />
+          <div className="version-picker">
+            <label htmlFor="api-version">phpMyFAQ version</label>
+            <select
+              id="api-version"
+              value={version}
+              onChange={handleVersionChange}
+              aria-label="Select phpMyFAQ version"
+            >
+              <option value="4.0">Version 4.0</option>
+              <option value="4.1">Version 4.1</option>
+              <option value="4.2">Version 4.2</option>
+            </select>
           </div>
+        </div>
+
+        <div className={`swagger-panel ${theme === 'dark' ? 'swagger-container-dark' : 'swagger-container-light'}`}>
+          <SwaggerUI
+            url={apiUrls[version]}
+            deepLinking={true}
+            displayOperationId={false}
+            defaultModelsExpandDepth={1}
+            defaultModelExpandDepth={1}
+            defaultModelRendering="example"
+            displayRequestDuration={true}
+            docExpansion="list"
+            filter={true}
+            showExtensions={true}
+            showCommonExtensions={true}
+            tryItOutEnabled={true}
+          />
         </div>
       </div>
     </div>

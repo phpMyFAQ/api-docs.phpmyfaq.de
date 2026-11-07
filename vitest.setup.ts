@@ -1,37 +1,25 @@
-import "@testing-library/jest-dom/vitest";
-import { afterEach, vi } from "vitest";
-import { cleanup } from "@testing-library/react";
+import '@testing-library/jest-dom/vitest';
+import { afterEach, beforeEach, vi } from 'vitest';
+import { cleanup } from '@testing-library/react';
+import { resetThemeStore } from './lib/themeStore';
+import { createMatchMedia, type MatchMedia } from './test/matchMedia';
+
+function resetTheme(): void {
+  localStorage.clear();
+  resetThemeStore();
+  document.documentElement.removeAttribute('data-theme');
+}
+
+beforeEach(resetTheme);
 
 afterEach(() => {
   cleanup();
-  document.documentElement.classList.remove("dark");
+  resetTheme();
 });
 
-type MediaQueryListener = (event: { matches: boolean; media: string }) => void;
-
-interface MockMediaQueryList {
-  matches: boolean;
-  media: string;
-  addEventListener: (type: string, listener: MediaQueryListener) => void;
-  removeEventListener: (type: string, listener: MediaQueryListener) => void;
-  addListener: (listener: MediaQueryListener) => void;
-  removeListener: (listener: MediaQueryListener) => void;
-  dispatchEvent: () => boolean;
-  onchange: null;
-}
-
 if (!window.matchMedia) {
-  Object.defineProperty(window, "matchMedia", {
+  Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: vi.fn().mockImplementation((query: string): MockMediaQueryList => ({
-      matches: false,
-      media: query,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(() => false),
-      onchange: null,
-    })),
+    value: vi.fn<MatchMedia>(createMatchMedia(false)),
   });
 }

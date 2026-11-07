@@ -1,25 +1,22 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import React from 'react';
+import SiteShell from '@/components/SiteShell';
+import { themeBootScript } from '@/lib/themeStore';
 import './globals.css';
 
-const inter = Inter({
-  subsets: ["latin"],
-  display: 'swap',
-});
-
 export const metadata: Metadata = {
-  title: "API Docs for phpMyFAQ",
-  description: "phpMyFAQ API documentation",
-  applicationName: "phpMyFAQ API",
-  keywords: ["phpMyFAQ", "API", "documentation", "FAQ", "REST"],
-  authors: [{ name: "phpMyFAQ Team" }],
-  creator: "phpMyFAQ Team",
+  title: 'API Docs for phpMyFAQ',
+  description: 'phpMyFAQ API documentation',
+  applicationName: 'phpMyFAQ API',
+  keywords: ['phpMyFAQ', 'API', 'documentation', 'FAQ', 'REST'],
+  authors: [{ name: 'phpMyFAQ Team' }],
+  creator: 'phpMyFAQ Team',
   metadataBase: new URL('https://api-docs.phpmyfaq.de'),
   openGraph: {
-    title: "API Docs for phpMyFAQ",
-    description: "phpMyFAQ API documentation",
-    type: "website",
+    title: 'API Docs for phpMyFAQ',
+    description: 'phpMyFAQ API documentation',
+    siteName: 'phpMyFAQ',
+    type: 'website',
   },
 };
 
@@ -29,8 +26,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
+      <body>
+        <SiteShell>{children}</SiteShell>
+      </body>
     </html>
   );
 }

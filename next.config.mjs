@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   turbopack: {},
+  agentRules: false,
   poweredByHeader: false,
   reactStrictMode: true,
   async headers() {
